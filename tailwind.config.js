@@ -17,7 +17,19 @@ module.exports = {
       },
     },
     extend: {
+      // custom
+      fontFamily: {
+        rubik: ["Rubik", "sans-serif"],
+      },
+
+      // shadcn/ui
       colors: {
+        // custom
+        'jelly-bean': '#2779A7',
+        'puerto-rico': '#49C5B6',
+        'terra-cotta': '#DF6C4F',
+
+        // shadcn/ui
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
