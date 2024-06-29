@@ -1,9 +1,10 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/services')({
-  component: ServicesPage,
+export const Route = createLazyFileRoute('/about-us')({
+  component: AboutUsPage,
 })
 
+import * as React from "react";
 
 const NavItem = ({ children, isButton = false }: { children: React.ReactNode; isButton?: boolean }) => {
   if (isButton) {
@@ -40,7 +41,7 @@ const SocialIcon = ({ src, alt }: { src: string; alt: string }) => (
   <img loading="lazy" src={src} alt={alt} className="shrink-0 w-6 aspect-square" />
 );
 
-function ServicesPage() {
+function AboutUsPage() {
   return (
     <div className="flex flex-col items-center bg-stone-50">
       <header className="flex flex-col items-center self-stretch px-5 pb-20 w-full text-center bg-cyan-700 max-md:max-w-full">
@@ -237,4 +238,3 @@ function ServicesPage() {
     </div>
   );
 }
-
