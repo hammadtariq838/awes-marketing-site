@@ -1,3 +1,9 @@
+import { createLazyFileRoute } from '@tanstack/react-router'
+
+export const Route = createLazyFileRoute('/')({
+  component: LandingPage,
+})
+
 const ServiceCard = ({ icon, title, description }: { icon: string, title: string, description: string }) => (
   <div className="flex flex-col grow px-7 py-6 w-full bg-white rounded-xl shadow leading-[150%] text-slate-950 text-opacity-60 max-md:pl-5 max-md:mt-7 max-md:max-w-full">
     <img loading="lazy" src={icon} alt={`${title} icon`} className="w-16 aspect-square" />
@@ -29,7 +35,7 @@ const ProcessStep = ({ title, description, image }: { image: string, title: stri
   </section>
 );
 
-function App() {
+function LandingPage() {
   const services = [
     {
       icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/2a8a6b2ec222c3290761487fa2129a69318c5dd12ddf45277e3fd5cd2e11f440?apiKey=37e9b177900140c9be4212bdea99ec1b&",
@@ -240,4 +246,4 @@ function App() {
   );
 }
 
-export default App;
+export default LandingPage;
