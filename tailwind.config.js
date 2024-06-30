@@ -25,6 +25,8 @@ module.exports = {
         'jelly-bean': '#2779A7',
         'puerto-rico': '#49C5B6',
         'terra-cotta': '#DF6C4F',
+        'brand': '#19615C',
+        'dark-marron': '#7E1D38',
 
         // shadcn/ui
         border: "hsl(var(--border))",
