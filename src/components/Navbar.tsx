@@ -17,7 +17,7 @@ export default function Navbar() {
           <img
             src="/logo.png"
             alt="AWES logo"
-            className="shrink-0 max-w-full aspect-[3.45] w-[150px] sm:w-[207px]"
+            className="shrink-0 max-w-full aspect-[3.45] w-[150px] sm:w-[170px] md:w-[207px]"
           />
         </Link>
         <div className="hidden sm:flex gap-8">
