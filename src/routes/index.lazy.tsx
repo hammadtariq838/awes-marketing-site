@@ -65,7 +65,7 @@ const processSteps = [
 
 function FeatureCard({ imgSrc, imgAlt, title, description }: { imgSrc: string; imgAlt: string; title: string; description: string }) {
   return (
-    <article className="flex flex-col p-7 rounded-xl shadow bg-white w-[calc(50%_-_16px)]">
+    <article className="flex flex-col p-7 rounded-xl shadow bg-white lg:w-[calc(50%_-_16px)]">
       <img loading="lazy" src={imgSrc} alt={imgAlt} className="aspect-square w-[62px]" />
       <h2 className="mt-3.5 text-xl font-bold leading-8 text-cyan-700">{title}</h2>
       <p className="mt-4 text-sm leading-5 text-slate-950 text-opacity-60">{description}</p>
@@ -75,7 +75,7 @@ function FeatureCard({ imgSrc, imgAlt, title, description }: { imgSrc: string; i
 
 const Specializations = () => (
   <section className='bg-[#FFFCF7]'>
-    <div className="max-w-6xl w-full mx-auto px-2">
+    <div className="max-w-6xl w-full mx-auto px-5">
       <div className="grid gap-5 w-full max-w-4xl mx-auto my-20">
         <h2 className="text-5xl font-extrabold tracking-wide text-jelly-bean text-center">Services we specialise in</h2>
         <p className="text-sm text-center text-slate-950 text-opacity-60">
@@ -104,7 +104,7 @@ const ProcessStep = ({ title, description, image }: { image: string, title: stri
     <div className="flex gap-5 max-md:flex-col max-md:gap-0">
       <div className="flex flex-col w-[66%] max-md:ml-0 max-md:w-full">
         <div className="flex flex-col grow mt-2 max-md:mt-10">
-          <h3 className="text-3xl font-extrabold leading-10 text-sky-600">{title}</h3>
+          <h3 className="text-xl md:text-3xl font-extrabold leading-10 text-sky-600">{title}</h3>
           <p className="mt-6 text-sm leading-5 text-slate-950 text-opacity-60">{description}</p>
           <button className="justify-center self-start px-4 py-2.5 mt-24 text-base font-bold leading-6 text-center text-white bg-pink-900 rounded-lg max-md:mt-10">
             Apply now
@@ -123,7 +123,7 @@ function LandingPage() {
   return (
     <main className='bg-[#FFFCF7]'>
       <Navbar />
-      <header className="flex flex-col w-full bg-teal-800 px-2">
+      <header className="flex flex-col w-full bg-teal-800 px-5">
         <div className="self-center mt-20 w-full max-w-6xl max-md:mt-10">
           <div className="flex gap-5 max-md:flex-col max-md:gap-0">
             <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
@@ -146,10 +146,10 @@ function LandingPage() {
         </div>
       </header>
       <Specializations />
-      <h2 className="text-5xl font-extrabold tracking-wide text-jelly-bean text-center mt-[88px]">
+      <h2 className="text-3xl md:text-5xl font-extrabold tracking-wide text-jelly-bean text-center mt-[88px]">
         See how we work with you
       </h2>
-      <section className='bg-[#FEFAEB] flex flex-col gap-20 py-20 px-2'>
+      <section className='bg-[#FEFAEB] flex flex-col gap-20 py-20 px-5'>
         {
           processSteps.map((step, index) => (
             <ProcessStep key={index} {...step} />
@@ -176,7 +176,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
-      <section className="flex justify-center items-center px-2 w-full text-center bg-stone-50 py-20">
+      <section className="flex justify-center items-center px-5 w-full text-center bg-stone-50 py-20">
         <div className="flex flex-col px-20 py-16 w-full rounded-3xl max-w-6xl max-md:px-5 bg-brand">
           <h2 className="mr-3.5 ml-3 text-3xl font-extrabold leading-10 text-white max-md:mr-2.5">
             Are you ready to join the U.S. healthcare system with help from AWES professionals?

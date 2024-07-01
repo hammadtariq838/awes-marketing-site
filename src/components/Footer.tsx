@@ -20,10 +20,10 @@ export default function Footer() {
             American Worldwide Educational Services is your trusted partner, guiding you from being a foreign graduate nurse to joining the U.S. healthcare profession and becoming a U.S. citizen.
           </p>
         </div>
-        <div className="flex flex-col md:flex-row gap-5 mt-8 md:mt-28 md:w-9/12 text-white justify-between">
+        <div className="flex flex-col md:flex-row gap-5 mt-8 md:mt-28 md:w-9/12 justify-between">
           <form className="flex gap-3 items-end">
             <div className="space-y-10 md:space-y-0 md:grid gap-5">
-              <p className="text-sm">
+              <p className="text-sm text-white">
                 Subscribe to stay tuned for new and latest updates. Let's do it!
               </p>
               <Label htmlFor="email" className="sr-only">Enter your email</Label>
