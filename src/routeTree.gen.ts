@@ -18,7 +18,10 @@ import { Route as rootRoute } from './routes/__root'
 
 const ServicesLazyImport = createFileRoute('/services')()
 const AboutUsLazyImport = createFileRoute('/about-us')()
+const AuthRouteLazyImport = createFileRoute('/_auth')()
 const IndexLazyImport = createFileRoute('/')()
+const AuthRegisterLazyImport = createFileRoute('/_auth/register')()
+const AuthLoginLazyImport = createFileRoute('/_auth/login')()
 
 // Create/Update Routes
 
@@ -32,10 +35,27 @@ const AboutUsLazyRoute = AboutUsLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/about-us.lazy').then((d) => d.Route))
 
+const AuthRouteLazyRoute = AuthRouteLazyImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/_auth/route.lazy').then((d) => d.Route))
+
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const AuthRegisterLazyRoute = AuthRegisterLazyImport.update({
+  path: '/register',
+  getParentRoute: () => AuthRouteLazyRoute,
+} as any).lazy(() =>
+  import('./routes/_auth/register.lazy').then((d) => d.Route),
+)
+
+const AuthLoginLazyRoute = AuthLoginLazyImport.update({
+  path: '/login',
+  getParentRoute: () => AuthRouteLazyRoute,
+} as any).lazy(() => import('./routes/_auth/login.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
@@ -46,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteLazyImport
       parentRoute: typeof rootRoute
     }
     '/about-us': {
@@ -62,6 +89,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesLazyImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginLazyImport
+      parentRoute: typeof AuthRouteLazyImport
+    }
+    '/_auth/register': {
+      id: '/_auth/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof AuthRegisterLazyImport
+      parentRoute: typeof AuthRouteLazyImport
+    }
   }
 }
 
@@ -69,6 +110,10 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   IndexLazyRoute,
+  AuthRouteLazyRoute: AuthRouteLazyRoute.addChildren({
+    AuthLoginLazyRoute,
+    AuthRegisterLazyRoute,
+  }),
   AboutUsLazyRoute,
   ServicesLazyRoute,
 })
@@ -82,6 +127,7 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_auth",
         "/about-us",
         "/services"
       ]
@@ -89,11 +135,26 @@ export const routeTree = rootRoute.addChildren({
     "/": {
       "filePath": "index.lazy.tsx"
     },
+    "/_auth": {
+      "filePath": "_auth/route.lazy.tsx",
+      "children": [
+        "/_auth/login",
+        "/_auth/register"
+      ]
+    },
     "/about-us": {
       "filePath": "about-us.lazy.tsx"
     },
     "/services": {
       "filePath": "services.lazy.tsx"
+    },
+    "/_auth/login": {
+      "filePath": "_auth/login.lazy.tsx",
+      "parent": "/_auth"
+    },
+    "/_auth/register": {
+      "filePath": "_auth/register.lazy.tsx",
+      "parent": "/_auth"
     }
   }
 }
