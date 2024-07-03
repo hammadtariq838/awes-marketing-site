@@ -4,16 +4,8 @@ import {
   FetchArgs,
   BaseQueryApi,
 } from '@reduxjs/toolkit/query/react';
-// import {
-//   BaseResponse,
-//   NoUserResponse,
-// } from '@/types/response.type';
-// import {
-//   ChangePasswordRequest, // TODO: add
-// } from '@/types/request.type';
-
 import { ACCOUNT_URL } from '@/constants';
-import { User, clearAuth } from '@/features/auth/authSlice';
+import { clearAuth } from '@/features/auth/authSlice';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: ACCOUNT_URL,
@@ -36,68 +28,18 @@ async function baseQueryWithAuth(
   return result;
 }
 
+// TODO: fix request / response types
 export const accountApiSlice = createApi({
   reducerPath: 'accountApi',
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
-    // TODO: response type & needs api route
-    signout: builder.mutation<BaseResponse, void>({
+    signout: builder.mutation<void, void>({
       query: () => ({
-        url: `/signout`, // TODO: add api route
+        url: `/signout`,
         method: 'POST',
-      }),
-    }),
-    accountDelete: builder.mutation<
-      BaseResponse,
-      void // body (TODO: add request type)
-    >({
-      query: () => ({
-        url: `/delete`,
-        method: 'POST',
-      }),
-    }),
-    accountDeactivate: builder.mutation<
-      BaseResponse,
-      void // body (TODO: add request type)
-    >({
-      query: () => ({
-        url: `/deactivate`,
-        method: 'POST',
-      }),
-    }),
-    accountActivate: builder.mutation<
-      User,
-      void // body (TODO: add request type)
-    >({
-      query: () => ({
-        url: `/activate`,
-        method: 'POST',
-      }),
-    }),
-    changePassword: builder.mutation<
-      BaseResponse,
-      ChangePasswordRequest
-    >({
-      query: (body) => ({
-        url: `/change-password`,
-        method: 'POST',
-        body,
-      }),
-    }),
-    getUser: builder.query<User | NoUserResponse, void>({
-      query: () => ({
-        url: `/`,
-        method: 'GET',
       }),
     }),
   }),
 });
 
-export const {
-  useAccountActivateMutation,
-  useAccountDeactivateMutation,
-  useSignoutMutation,
-  useAccountDeleteMutation,
-  useChangePasswordMutation,
-  useGetUserQuery,
-} = accountApiSlice;
+export const { useSignoutMutation } = accountApiSlice;

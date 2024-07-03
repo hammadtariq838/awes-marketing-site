@@ -2,16 +2,9 @@ import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import {
-  StudentUserResponse,
-  TutorUserResponse,
-  AdminUserResponse,
-} from '@/types';
+import { UserResponse } from '@/types';
 
-export type User =
-  | StudentUserResponse
-  | TutorUserResponse
-  | AdminUserResponse;
+export type User = UserResponse;
 
 export type AuthState = {
   user: User | null;
