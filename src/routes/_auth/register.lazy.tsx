@@ -1,65 +1,240 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-export const Route = createLazyFileRoute('/_auth/register')({
-  component: RegisterPage,
-})
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useSignupMutation, useRequestEmailVerificationMutation } from "@/services/account/accountApiSlice";
+import { setAuth } from "@/features/auth/authSlice";
+import { useAppDispatch } from "@/app/hooks";
+import { toast } from "sonner";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Eye, EyeOff } from "lucide-react";
 
+const RegisterFormSchema = z.object({
+  name: z.string().min(3, { message: "Not a valid name" }),
+  email: z.string().email({ message: "Invalid email" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
+  terms: z.literal(true, {
+    errorMap: () => ({
+      message: "Please accept terms and conditions",
+    }),
+  }),
+});
 
-function InputField({ label, type = "text" }: { label: string; type?: string }) {
+type RegisterFormValues = z.infer<typeof RegisterFormSchema>;
+
+// This can come from your database or API.
+const defaultValues: RegisterFormValues = {
+  name: "",
+  email: "",
+  password: "",
+  terms: true,
+};
+
+const RegisterScreen = () => {
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(RegisterFormSchema),
+    defaultValues,
+  });
+  const [registerApiCall, { isLoading }] = useSignupMutation();
+  const [verifyRequestApiCall] = useRequestEmailVerificationMutation();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  async function onSubmit(data: RegisterFormValues) {
+    const { name, email, password } = data;
+    try {
+      const res = await registerApiCall({ name, email, password, role: 'user' }).unwrap();
+      console.log("register", res);
+      toast.success("Registration Successful!");
+      dispatch(setAuth(res));
+      navigate({ to: "/email-verification" });
+      await verifyRequestApiCall().unwrap();
+      console.log("verify_request", res);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error?.data?.message || error.error);
+      console.log(error);
+    }
+  }
+
   return (
-    <>
-      <label htmlFor={label.toLowerCase()} className="block mb-1">
-        {label}
-      </label>
-      <input
-        type={type}
-        id={label.toLowerCase()}
-        className="w-full h-[42px] bg-white rounded-md border border-gray-300 border-solid shadow-sm"
-        aria-label={label}
-      />
-    </>
-  );
-}
+    <Card className="p-10 px-8">
+      <Form {...form}>
+        <form
+          className="flex flex-col justify-center w-[420px] p-4 gap-4 rounded"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      autoComplete="name"
+                      placeholder="Enter your name"
+                      autoFocus
+                      {...field}
+                      className={cn(
+                        form.formState.errors.email && "border-destructive",
+                        ""
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="Enter your email address"
+                      {...field}
+                      className={cn(
+                        form.formState.errors.email && "border-destructive",
+                        ""
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Password</FormLabel>
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {!showPassword ? (
+                        <Eye className="w-4 h-4" />
+                      ) : (
+                        <EyeOff className="w-4 h-4" />
+                      )}
+                      <span className=" text-sm font-medium">
+                        {/* show or hide text */}
+                        {!showPassword ? "Show" : "Hide"}
+                      </span>
+                    </button>
+                  </div>
+                  <FormControl>
+                    <div className="w-full">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="password"
+                        placeholder="Enter your password"
+                        {...field}
+                        className={cn(
+                          form.formState.errors.password &&
+                          "border-destructive",
+                          ""
+                        )}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-function SignUpForm() {
-  return (
-    <form className="flex flex-col px-10 py-7 max-w-full bg-white rounded-xl shadow leading-[150%] w-[505px] max-md:px-5">
-      <InputField label="Name" />
-      <div className="mt-6">
-        <InputField label="Email address" type="email" />
-      </div>
-      <div className="mt-6">
-        <InputField label="Password" type="password" />
-      </div>
-      <button
-        type="submit"
-        className="justify-center items-center px-4 py-2.5 mt-6 text-sm font-medium leading-5 text-white bg-pink-900 rounded-md shadow-sm max-md:px-5"
-      >
-        Sign up
-      </button>
-      <p className="self-center mt-6 text-sm leading-5 text-right">
-        <span className="text-slate-950">Already have an account? </span>
-        <a href="#" className="text-indigo-600">
-          Sign in
-        </a>
-      </p>
-    </form>
-  );
-}
+            <FormField
+              control={form.control}
+              name="terms"
+              render={({ field }) => (
+                <FormItem className="flex-row">
+                  <FormControl>
+                    <>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        value={field.value?.toString()}
+                        disabled={field.disabled}
+                        name="terms"
+                        className={cn(
+                          form.formState.errors.terms && "border-destructive",
+                          "align-middle me-3"
+                        )}
+                      />
+                      <FormLabel>Accept terms and conditions</FormLabel>
+                    </>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+          <p>
+            Already have an account?{" "}
+            But
+            <Link
+              to="/login"
+              className={cn(buttonVariants({ variant: 'link' }))}
+            >
+              Sign In
+            </Link>
+          </p>
 
-function RegisterPage() {
-  return (
-    <div className='flex flex-col justify-center gap-8 max-w-[505px] h-full'>
-      <div className="grid gap-2 text-center">
-        <h1 className="text-3xl font-extrabold leading-10 text-cyan-700">
-          Sign Up
-        </h1>
-        <p className="leading-[143%] text-slate-950 text-opacity-60">
-          Please enter relevant details for sign up
-        </p>
-      </div>
-      <SignUpForm />
-    </div>
-  );
-}
+          <Button
+            className="w-full bg-[#EB7547]"
+            size={"lg"}
+            type="submit"
+            disabled={isLoading}
+          >
+            Sign Up
+          </Button>
 
+          {/* reset password */}
+          <div className="flex items-center justify-between">
+            <div>
+              <span>Need help?</span>{" "}
+              <Button
+                variant='link'
+                asChild
+              >
+                <Link to='/about-us'>Contact us</Link>
+              </Button>
+            </div>
+          </div>
+        </form>
+      </Form>
+    </Card>
+  );
+};
+
+export const Route = createLazyFileRoute("/_auth/register")({
+  component: RegisterScreen,
+});

@@ -1,52 +1,183 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute } from "@tanstack/react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-export const Route = createLazyFileRoute('/_auth/login')({
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { useSigninMutation } from "@/services/account/accountApiSlice";
+import { toast } from "sonner";
+import { setAuth } from "@/features/auth/authSlice";
+import { useAppDispatch } from "@/app/hooks";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Eye, EyeOff } from "lucide-react";
+
+
+const LoginFormSchema = z.object({
+  email: z.string().email({ message: "Invalid email" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
+});
+
+type LoginFormValues = z.infer<typeof LoginFormSchema>;
+
+const defaultValues: LoginFormValues = {
+  email: "",
+  password: "",
+};
+
+const LoginScreen = () => {
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(LoginFormSchema),
+    defaultValues,
+  });
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [loginApiCall, { isLoading }] = useSigninMutation();
+
+  async function onSubmit(data: LoginFormValues) {
+    try {
+      const res = await loginApiCall(data).unwrap();
+      console.log("login", res);
+      toast.success("Login Successful!");
+      dispatch(setAuth(res));
+      navigate({ to: "/email-verification" });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log("login error", error);
+      toast.error(error?.data?.message || error.error);
+    }
+  }
+
+  return (
+    <Card className="p-10 px-8">
+      <Form {...form}>
+        <form
+          className="flex flex-col justify-center w-[420px] p-4 gap-4 rounded"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
+          <div>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      autoComplete="email"
+                      placeholder="Enter your email address"
+                      {...field}
+                      className={cn(
+                        form.formState.errors.email && "border-destructive",
+                        ""
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Password</FormLabel>
+                    {/* css class to not go to another line because of space */}
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {!showPassword ? (
+                        <Eye className="w-4 h-4" />
+                      ) : (
+                        <EyeOff className="w-4 h-4" />
+                      )}
+                      <span className=" text-sm font-medium">
+                        {!showPassword ? "Show" : "Hide"}
+                      </span>
+                    </button>
+                  </div>
+                  <FormControl>
+                    <div className="w-full">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="password"
+                        placeholder="Enter your password"
+                        {...field}
+                        className={cn(
+                          form.formState.errors.password &&
+                          "border-destructive")}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+
+          <Button
+            variant='link'
+            asChild
+          >
+            <Link to='/reset-request'>Forget Password?</Link>
+          </Button>
+
+          <Button
+            variant='brand'
+            size={"lg"}
+            type="submit"
+            disabled={isLoading}
+          >
+            Log in
+          </Button>
+
+          <div className="flex items-center justify-between">
+            <Button
+              variant='link'
+              asChild
+            >
+              <Link to='/register'>Sign Up?</Link>
+            </Button>
+
+            <div>
+              <span>Need help?</span>{" "}
+              <Button
+                variant='link'
+                asChild
+              >
+                <Link to='/about-us'>Contact us</Link>
+              </Button>
+            </div>
+          </div>
+        </form>
+      </Form>
+    </Card >
+  );
+};
+
+export const Route = createLazyFileRoute("/_auth/login")({
   component: LoginScreen,
-})
-
-function InputField({ label, type = "text" }: { label: string; type?: string }) {
-  const id = label.toLowerCase().replace(/\s/g, '-');
-  return (
-    <div className="mb-6">
-      <label htmlFor={id} className="block text-base text-slate-950 mb-1">{label}</label>
-      <input
-        type={type}
-        id={id}
-        className="w-full h-[42px] bg-white rounded-md border border-gray-300 border-solid shadow-sm"
-      />
-    </div>
-  );
-}
-
-function LoginScreen() {
-  return (
-    <div className='flex flex-col justify-center gap-8 max-w-[448px] h-full'>
-      <div className="grid gap-2 text-center">
-        <h1 className="text-3xl font-extrabold leading-10 text-cyan-700">
-          Welcome back
-        </h1>
-        <p className="leading-[143%] text-slate-950 text-opacity-60">
-          Please enter your login details
-        </p>
-      </div>
-      <form className="flex flex-col px-10 py-7 max-w-full bg-white rounded-xl shadow leading-[150%] w-[505px] max-md:px-5">
-        <InputField label="Email address" type="email" />
-        <InputField label="Password" type="password" />
-        <div className="flex gap-5 justify-between w-full leading-[143%]">
-          <label className="flex gap-2 text-slate-950">
-            <input type="checkbox" className="shrink-0 my-auto w-4 h-4 bg-white rounded border border-gray-300 border-solid" />
-            Remember me
-          </label>
-          <a href="#" className="text-right text-indigo-600">Forgot your password?</a>
-        </div>
-        <button className="justify-center items-center px-4 py-2.5 mt-6 font-medium text-white bg-pink-900 rounded-md shadow-sm leading-[143%] max-md:px-5">
-          Sign in
-        </button>
-        <p className="self-center mt-6 leading-5 text-right">
-          <span className="text-slate-950">Don't have account?</span>{" "}
-          <a href="#" className="text-indigo-600">Sign up</a>
-        </p>
-      </form>
-    </div>
-  );
-}
+});

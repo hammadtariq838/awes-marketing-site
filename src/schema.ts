@@ -87,7 +87,8 @@ const APISchema = {
           .string({ message: 'email must be a string' })
           .email({
             message: 'email must be a valid email address',
-          }),
+          })
+          .optional(),
       }),
     },
     resetPassword: {

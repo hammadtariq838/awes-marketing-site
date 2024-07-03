@@ -2,7 +2,7 @@ import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
 import { createLazyFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createLazyFileRoute('/_marketing/')({
   component: LandingPage,
 })
 

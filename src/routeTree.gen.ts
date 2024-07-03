@@ -16,77 +16,134 @@ import { Route as rootRoute } from './routes/__root'
 
 // Create Virtual Routes
 
-const ServicesLazyImport = createFileRoute('/services')()
-const AboutUsLazyImport = createFileRoute('/about-us')()
-const AuthRouteLazyImport = createFileRoute('/_auth')()
-const IndexLazyImport = createFileRoute('/')()
+const MarketingRouteLazyImport = createFileRoute('/_marketing')()
+const Auth2RouteLazyImport = createFileRoute('/_auth2')()
+const MarketingIndexLazyImport = createFileRoute('/_marketing/')()
+const MarketingServicesLazyImport = createFileRoute('/_marketing/services')()
+const MarketingAboutUsLazyImport = createFileRoute('/_marketing/about-us')()
+const Auth2RegisterLazyImport = createFileRoute('/_auth2/register')()
+const Auth2LoginLazyImport = createFileRoute('/_auth2/login')()
+const AuthResetVerificationLazyImport = createFileRoute(
+  '/_auth/reset-verification',
+)()
+const AuthResetRequestLazyImport = createFileRoute('/_auth/reset-request')()
+const AuthResetPasswordLazyImport = createFileRoute('/_auth/reset-password')()
 const AuthRegisterLazyImport = createFileRoute('/_auth/register')()
 const AuthLoginLazyImport = createFileRoute('/_auth/login')()
+const AuthEmailVerificationLazyImport = createFileRoute(
+  '/_auth/email-verification',
+)()
 
 // Create/Update Routes
 
-const ServicesLazyRoute = ServicesLazyImport.update({
-  path: '/services',
+const MarketingRouteLazyRoute = MarketingRouteLazyImport.update({
+  id: '/_marketing',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/services.lazy').then((d) => d.Route))
+} as any).lazy(() =>
+  import('./routes/_marketing/route.lazy').then((d) => d.Route),
+)
 
-const AboutUsLazyRoute = AboutUsLazyImport.update({
-  path: '/about-us',
+const Auth2RouteLazyRoute = Auth2RouteLazyImport.update({
+  id: '/_auth2',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/about-us.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/_auth2/route.lazy').then((d) => d.Route))
 
-const AuthRouteLazyRoute = AuthRouteLazyImport.update({
-  id: '/_auth',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/_auth/route.lazy').then((d) => d.Route))
-
-const IndexLazyRoute = IndexLazyImport.update({
+const MarketingIndexLazyRoute = MarketingIndexLazyImport.update({
   path: '/',
+  getParentRoute: () => MarketingRouteLazyRoute,
+} as any).lazy(() =>
+  import('./routes/_marketing/index.lazy').then((d) => d.Route),
+)
+
+const MarketingServicesLazyRoute = MarketingServicesLazyImport.update({
+  path: '/services',
+  getParentRoute: () => MarketingRouteLazyRoute,
+} as any).lazy(() =>
+  import('./routes/_marketing/services.lazy').then((d) => d.Route),
+)
+
+const MarketingAboutUsLazyRoute = MarketingAboutUsLazyImport.update({
+  path: '/about-us',
+  getParentRoute: () => MarketingRouteLazyRoute,
+} as any).lazy(() =>
+  import('./routes/_marketing/about-us.lazy').then((d) => d.Route),
+)
+
+const Auth2RegisterLazyRoute = Auth2RegisterLazyImport.update({
+  path: '/register',
+  getParentRoute: () => Auth2RouteLazyRoute,
+} as any).lazy(() =>
+  import('./routes/_auth2/register.lazy').then((d) => d.Route),
+)
+
+const Auth2LoginLazyRoute = Auth2LoginLazyImport.update({
+  path: '/login',
+  getParentRoute: () => Auth2RouteLazyRoute,
+} as any).lazy(() => import('./routes/_auth2/login.lazy').then((d) => d.Route))
+
+const AuthResetVerificationLazyRoute = AuthResetVerificationLazyImport.update({
+  path: '/reset-verification',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any).lazy(() =>
+  import('./routes/_auth/reset-verification.lazy').then((d) => d.Route),
+)
+
+const AuthResetRequestLazyRoute = AuthResetRequestLazyImport.update({
+  path: '/reset-request',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/_auth/reset-request.lazy').then((d) => d.Route),
+)
+
+const AuthResetPasswordLazyRoute = AuthResetPasswordLazyImport.update({
+  path: '/reset-password',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/_auth/reset-password.lazy').then((d) => d.Route),
+)
 
 const AuthRegisterLazyRoute = AuthRegisterLazyImport.update({
   path: '/register',
-  getParentRoute: () => AuthRouteLazyRoute,
+  getParentRoute: () => rootRoute,
 } as any).lazy(() =>
   import('./routes/_auth/register.lazy').then((d) => d.Route),
 )
 
 const AuthLoginLazyRoute = AuthLoginLazyImport.update({
   path: '/login',
-  getParentRoute: () => AuthRouteLazyRoute,
+  getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/_auth/login.lazy').then((d) => d.Route))
+
+const AuthEmailVerificationLazyRoute = AuthEmailVerificationLazyImport.update({
+  path: '/email-verification',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/_auth/email-verification.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/_auth': {
-      id: '/_auth'
+    '/_auth2': {
+      id: '/_auth2'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthRouteLazyImport
+      preLoaderRoute: typeof Auth2RouteLazyImport
       parentRoute: typeof rootRoute
     }
-    '/about-us': {
-      id: '/about-us'
-      path: '/about-us'
-      fullPath: '/about-us'
-      preLoaderRoute: typeof AboutUsLazyImport
+    '/_marketing': {
+      id: '/_marketing'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MarketingRouteLazyImport
       parentRoute: typeof rootRoute
     }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesLazyImport
+    '/_auth/email-verification': {
+      id: '/_auth/email-verification'
+      path: '/email-verification'
+      fullPath: '/email-verification'
+      preLoaderRoute: typeof AuthEmailVerificationLazyImport
       parentRoute: typeof rootRoute
     }
     '/_auth/login': {
@@ -94,14 +151,70 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof AuthLoginLazyImport
-      parentRoute: typeof AuthRouteLazyImport
+      parentRoute: typeof rootRoute
     }
     '/_auth/register': {
       id: '/_auth/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof AuthRegisterLazyImport
-      parentRoute: typeof AuthRouteLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/reset-password': {
+      id: '/_auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/reset-request': {
+      id: '/_auth/reset-request'
+      path: '/reset-request'
+      fullPath: '/reset-request'
+      preLoaderRoute: typeof AuthResetRequestLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/reset-verification': {
+      id: '/_auth/reset-verification'
+      path: '/reset-verification'
+      fullPath: '/reset-verification'
+      preLoaderRoute: typeof AuthResetVerificationLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth2/login': {
+      id: '/_auth2/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof Auth2LoginLazyImport
+      parentRoute: typeof Auth2RouteLazyImport
+    }
+    '/_auth2/register': {
+      id: '/_auth2/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof Auth2RegisterLazyImport
+      parentRoute: typeof Auth2RouteLazyImport
+    }
+    '/_marketing/about-us': {
+      id: '/_marketing/about-us'
+      path: '/about-us'
+      fullPath: '/about-us'
+      preLoaderRoute: typeof MarketingAboutUsLazyImport
+      parentRoute: typeof MarketingRouteLazyImport
+    }
+    '/_marketing/services': {
+      id: '/_marketing/services'
+      path: '/services'
+      fullPath: '/services'
+      preLoaderRoute: typeof MarketingServicesLazyImport
+      parentRoute: typeof MarketingRouteLazyImport
+    }
+    '/_marketing/': {
+      id: '/_marketing/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof MarketingIndexLazyImport
+      parentRoute: typeof MarketingRouteLazyImport
     }
   }
 }
@@ -109,13 +222,21 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  IndexLazyRoute,
-  AuthRouteLazyRoute: AuthRouteLazyRoute.addChildren({
-    AuthLoginLazyRoute,
-    AuthRegisterLazyRoute,
+  Auth2RouteLazyRoute: Auth2RouteLazyRoute.addChildren({
+    Auth2LoginLazyRoute,
+    Auth2RegisterLazyRoute,
   }),
-  AboutUsLazyRoute,
-  ServicesLazyRoute,
+  MarketingRouteLazyRoute: MarketingRouteLazyRoute.addChildren({
+    MarketingAboutUsLazyRoute,
+    MarketingServicesLazyRoute,
+    MarketingIndexLazyRoute,
+  }),
+  AuthEmailVerificationLazyRoute,
+  AuthLoginLazyRoute,
+  AuthRegisterLazyRoute,
+  AuthResetPasswordLazyRoute,
+  AuthResetRequestLazyRoute,
+  AuthResetVerificationLazyRoute,
 })
 
 /* prettier-ignore-end */
@@ -126,35 +247,68 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/_auth",
-        "/about-us",
-        "/services"
-      ]
-    },
-    "/": {
-      "filePath": "index.lazy.tsx"
-    },
-    "/_auth": {
-      "filePath": "_auth/route.lazy.tsx",
-      "children": [
+        "/_auth2",
+        "/_marketing",
+        "/_auth/email-verification",
         "/_auth/login",
-        "/_auth/register"
+        "/_auth/register",
+        "/_auth/reset-password",
+        "/_auth/reset-request",
+        "/_auth/reset-verification"
       ]
     },
-    "/about-us": {
-      "filePath": "about-us.lazy.tsx"
+    "/_auth2": {
+      "filePath": "_auth2/route.lazy.tsx",
+      "children": [
+        "/_auth2/login",
+        "/_auth2/register"
+      ]
     },
-    "/services": {
-      "filePath": "services.lazy.tsx"
+    "/_marketing": {
+      "filePath": "_marketing/route.lazy.tsx",
+      "children": [
+        "/_marketing/about-us",
+        "/_marketing/services",
+        "/_marketing/"
+      ]
+    },
+    "/_auth/email-verification": {
+      "filePath": "_auth/email-verification.lazy.tsx"
     },
     "/_auth/login": {
-      "filePath": "_auth/login.lazy.tsx",
-      "parent": "/_auth"
+      "filePath": "_auth/login.lazy.tsx"
     },
     "/_auth/register": {
-      "filePath": "_auth/register.lazy.tsx",
-      "parent": "/_auth"
+      "filePath": "_auth/register.lazy.tsx"
+    },
+    "/_auth/reset-password": {
+      "filePath": "_auth/reset-password.lazy.tsx"
+    },
+    "/_auth/reset-request": {
+      "filePath": "_auth/reset-request.lazy.tsx"
+    },
+    "/_auth/reset-verification": {
+      "filePath": "_auth/reset-verification.lazy.tsx"
+    },
+    "/_auth2/login": {
+      "filePath": "_auth2/login.lazy.tsx",
+      "parent": "/_auth2"
+    },
+    "/_auth2/register": {
+      "filePath": "_auth2/register.lazy.tsx",
+      "parent": "/_auth2"
+    },
+    "/_marketing/about-us": {
+      "filePath": "_marketing/about-us.lazy.tsx",
+      "parent": "/_marketing"
+    },
+    "/_marketing/services": {
+      "filePath": "_marketing/services.lazy.tsx",
+      "parent": "/_marketing"
+    },
+    "/_marketing/": {
+      "filePath": "_marketing/index.lazy.tsx",
+      "parent": "/_marketing"
     }
   }
 }

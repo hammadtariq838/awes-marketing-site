@@ -53,7 +53,7 @@ export const accountApiSlice = createApi({
     }),
     signin: builder.mutation<
       AccountResponse,
-      Omit<AccountSignupPayload, 'password' | 'role'>
+      { email: string; password: string }
     >({
       query: (body) => ({
         url: `/signin`,
