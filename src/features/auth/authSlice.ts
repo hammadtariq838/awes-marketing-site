@@ -1,10 +1,10 @@
+import { AccountResponse } from '@/schema';
 import {
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
-import { UserResponse } from '@/types';
 
-export type User = UserResponse;
+export type User = AccountResponse;
 
 export type AuthState = {
   user: User | null;
