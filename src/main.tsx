@@ -2,12 +2,15 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import './index.css'
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from '@/app/store';
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
 
 // Create a new router instance
-const router = createRouter({ routeTree })
+const router = createRouter({ routeTree, notFoundMode: 'root' })
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
@@ -22,7 +25,12 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+
+          <RouterProvider router={router} />
+        </PersistGate>
+      </Provider>
     </StrictMode>
   )
 }
