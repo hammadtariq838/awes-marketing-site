@@ -1,6 +1,6 @@
 import { Link, Outlet, createLazyFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/_auth2')({
+export const Route = createLazyFileRoute('/auth2')({
   component: AuthLayout,
 })
 
@@ -21,14 +21,12 @@ function Navbar() {
   )
 }
 
-
-
 function AuthLayout() {
   return (
     <main className='flex flex-col min-h-screen'>
       <Navbar />
-      <section className="flex justify-center items-center grow bg-teal-800 w-full">
-        <div className="flex items-center justify-center lg:grow lg:w-1/2 bg-[#FEFAEB] lg:my-4 lg:rounded-e-3xl rounded-lg h-max lg:h-auto py-8">
+      <section className="flex items-center grow bg-teal-800 w-full">
+        <div className="lg:grow lg:w-1/2 bg-[#ede8d5] lg:rounded-e-3xl rounded-lg py-8 ">
           <div className="max-w-xl h-full w-full lg:ml-auto lg:pl-5 px-8 lg:px-0">
             <Outlet />
           </div>

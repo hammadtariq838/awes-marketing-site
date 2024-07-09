@@ -1,6 +1,7 @@
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navbar';
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button';
+import { Link, createLazyFileRoute } from '@tanstack/react-router'
 
 export const Route = createLazyFileRoute('/_marketing/')({
   component: LandingPage,
@@ -106,13 +107,16 @@ const ProcessStep = ({ title, description, image }: { image: string, title: stri
         <div className="flex flex-col grow mt-2 max-md:mt-10">
           <h3 className="text-xl md:text-3xl font-extrabold leading-10 text-sky-600">{title}</h3>
           <p className="mt-6 text-sm leading-5 text-slate-950 text-opacity-60">{description}</p>
-          <button className="justify-center self-start px-4 py-2.5 mt-24 text-base font-bold leading-6 text-center text-white bg-pink-900 rounded-lg max-md:mt-10">
-            Apply now
-          </button>
+          <Button className="justify-center self-start px-4 py-2.5 mt-24 text-base font-bold leading-6 text-center text-white bg-pink-900 rounded-lg max-md:mt-10"
+            asChild>
+            <Link to='/login'>
+              Apply now
+            </Link>
+          </Button>
         </div>
       </div>
       <div className="flex flex-col ml-5 w-[34%] max-md:ml-0 max-md:w-full">
-        <img loading="lazy" src={image} alt={`Illustration for ${title}`} className="grow w-full aspect-[1.41] max-md:mt-10" />
+        <img loading="lazy" src={image} alt={`Illustration for ${title}`} className="grow w-full max-w-[340px] aspect-[1.41] max-md:mt-10" />
       </div>
     </div>
   </section>
@@ -123,24 +127,26 @@ function LandingPage() {
   return (
     <main className='bg-[#FFFCF7]'>
       <Navbar />
-      <header className="flex flex-col w-full bg-teal-800 px-5">
-        <div className="self-center mt-20 w-full max-w-6xl max-md:mt-10">
+      <header className="flex flex-col w-full bg-teal-800 px-5 relative">
+        <div className="self-center my-24 w-full max-w-6xl max-md:mt-10">
           <div className="flex gap-5 max-md:flex-col max-md:gap-0">
-            <div className="flex flex-col w-6/12 max-md:ml-0 max-md:w-full">
-              <div className="flex z-10 flex-col px-5 mt-11 text-white max-md:mt-10">
-                <h1 className="text-5xl font-extrabold tracking-wide leading-[56px]">
+            <div className="flex flex-col w-[56%] max-md:ml-0 max-md:w-full">
+              <div className="flex z-10 flex-col px-5 gap-9 text-white">
+                <h1 className="text-[42px] font-extrabold tracking-wide leading-[50px]">
                   Your one-stop platform for starting your nursing career in the U.S.
                 </h1>
-                <p className="mt-14 text-sm leading-5 max-md:mt-10">
+                <p className="text-sm leading-5">
                   Are you a foreign graduate nurse looking to join the U.S. healthcare system? You are in the right spot. We help talented nursing professionals transform their credentials into a U.S. license, secure their dream job, and obtain green cards for themselves and their families.
                 </p>
-                <button className="justify-center self-start px-4 py-2.5 mt-9 text-base font-bold leading-6 text-center text-white bg-pink-900 rounded-lg">
-                  Apply now
-                </button>
+                <Button className="justify-center self-start px-4 py-2.5 text-base font-bold leading-6 text-center text-white bg-pink-900 rounded-lg">
+                  <Link to='/login'>
+                    Apply now
+                  </Link>
+                </Button>
               </div>
             </div>
-            <div className="flex flex-col ml-5 w-6/12 max-md:ml-0 max-md:w-full">
-              <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/ceceee3eee58b160d9608402d8e7739ac0ae11358d11b2ef93546c3308d42efa?apiKey=37e9b177900140c9be4212bdea99ec1b&" alt="Nursing professional" className="grow w-full aspect-[1.45]" />
+            <div className="absolute flex flex-col ml-5 w-[44%] max-md:ml-0 max-md:w-full right-0 bottom-0">
+              <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/ceceee3eee58b160d9608402d8e7739ac0ae11358d11b2ef93546c3308d42efa?apiKey=37e9b177900140c9be4212bdea99ec1b&" alt="Nursing professional" className="grow aspect-[1.45] max-w-[700px] h-[500px]" />
             </div>
           </div>
         </div>

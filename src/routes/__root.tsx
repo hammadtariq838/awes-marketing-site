@@ -1,11 +1,26 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import { Toaster } from '@/components/ui/sonner';
+import { PageNotFound } from './__404';
+import { lazy, Suspense } from 'react';
+
+const TanStackRouterDevtools =
+  process.env.NODE_ENV === 'production'
+    ? () => null
+    : lazy(() =>
+      import('@tanstack/router-devtools').then((res) => ({
+        default: res.TanStackRouterDevtools,
+      })),
+    )
 
 export const Route = createRootRoute({
   component: () => (
     <>
+      <Toaster richColors position="top-center" />
       <Outlet />
-      <TanStackRouterDevtools />
+      <Suspense>
+        <TanStackRouterDevtools />
+      </Suspense>
     </>
   ),
+  notFoundComponent: PageNotFound,
 })

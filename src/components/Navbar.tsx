@@ -6,9 +6,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Menu } from "lucide-react";
+import { useAppSelector } from "@/app/hooks";
 
 
 export default function Navbar() {
+  const user = useAppSelector((state) => state.auth.user);
   return (
     <header className="bg-white w-full shadow">
       <div className="flex items-center justify-between gap-5 max-w-6xl px-5 w-full mx-auto h-[75px]">
@@ -26,12 +28,27 @@ export default function Navbar() {
             <Link to='/services' className='hover:text-dark-marron'>Services</Link>
             <Link to='/about-us' className='hover:text-dark-marron'>About us</Link>
           </nav>
-          <Button
-            size='brand'
-            variant='brand'
-          >
-            Apply now
-          </Button>
+          {
+            user ? (
+              <Button
+                size='brand'
+                variant='brand'
+              >
+                <Link to='/dashboard'>
+                  Go to Dashboard
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                size='brand'
+                variant='brand'
+              >
+                <Link to='/register'>
+                  Apply now
+                </Link>
+              </Button>
+            )
+          }
         </div>
         <Sheet>
           <SheetTrigger className="block sm:hidden">

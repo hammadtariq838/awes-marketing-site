@@ -1,4 +1,9 @@
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from '@tanstack/react-router'
+
+export const Route = createLazyFileRoute('/_auth/login')({
+  component: LoginPage,
+})
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,7 +28,6 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
 
-
 const LoginFormSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
   password: z
@@ -38,7 +42,7 @@ const defaultValues: LoginFormValues = {
   password: "",
 };
 
-const LoginScreen = () => {
+function LoginPage() {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues,
@@ -57,7 +61,7 @@ const LoginScreen = () => {
       console.log("login", res);
       toast.success("Login Successful!");
       dispatch(setAuth(res));
-      navigate({ to: "/email-verification" });
+      navigate({ to: "/dashboard" });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.log("login error", error);
@@ -176,8 +180,4 @@ const LoginScreen = () => {
       </Form>
     </Card >
   );
-};
-
-export const Route = createLazyFileRoute("/_auth/login")({
-  component: LoginScreen,
-});
+}

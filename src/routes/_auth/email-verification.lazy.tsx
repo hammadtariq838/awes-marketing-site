@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
-import { useAppDispatch } from '@/app/hooks';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import {
   useRequestEmailVerificationMutation,
   useValidateEmailVerificationMutation,
@@ -18,6 +18,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp"
 import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
+import { useEffect } from 'react';
 
 const FormSchema = z.object({
   pin: z.string().min(6, {
@@ -26,8 +27,15 @@ const FormSchema = z.object({
 })
 
 const EmailVerificationScreen = () => {
+  const user = useAppSelector((state) => state.auth.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.account.isVerified) {
+      navigate({ to: '/dashboard' });
+    }
+  }, [user, navigate]);
 
   const [verifyApiCall, { isLoading: verifyLoading }] = useValidateEmailVerificationMutation();
   const [verifyRequestApiCall, { isLoading: verifyRequestLoading }] = useRequestEmailVerificationMutation();

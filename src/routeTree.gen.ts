@@ -13,16 +13,22 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as R404Import } from './routes/__404'
 
 // Create Virtual Routes
 
+const Auth2RouteLazyImport = createFileRoute('/auth2')()
 const MarketingRouteLazyImport = createFileRoute('/_marketing')()
-const Auth2RouteLazyImport = createFileRoute('/_auth2')()
+const DashboardRouteLazyImport = createFileRoute('/_dashboard')()
 const MarketingIndexLazyImport = createFileRoute('/_marketing/')()
+const Auth2RegisterLazyImport = createFileRoute('/auth2/register')()
+const Auth2LoginLazyImport = createFileRoute('/auth2/login')()
 const MarketingServicesLazyImport = createFileRoute('/_marketing/services')()
 const MarketingAboutUsLazyImport = createFileRoute('/_marketing/about-us')()
-const Auth2RegisterLazyImport = createFileRoute('/_auth2/register')()
-const Auth2LoginLazyImport = createFileRoute('/_auth2/login')()
+const DashboardDashboardLazyImport = createFileRoute('/_dashboard/dashboard')()
+const DashboardApplicationLazyImport = createFileRoute(
+  '/_dashboard/application',
+)()
 const AuthResetVerificationLazyImport = createFileRoute(
   '/_auth/reset-verification',
 )()
@@ -36,6 +42,11 @@ const AuthEmailVerificationLazyImport = createFileRoute(
 
 // Create/Update Routes
 
+const Auth2RouteLazyRoute = Auth2RouteLazyImport.update({
+  path: '/auth2',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/auth2/route.lazy').then((d) => d.Route))
+
 const MarketingRouteLazyRoute = MarketingRouteLazyImport.update({
   id: '/_marketing',
   getParentRoute: () => rootRoute,
@@ -43,10 +54,17 @@ const MarketingRouteLazyRoute = MarketingRouteLazyImport.update({
   import('./routes/_marketing/route.lazy').then((d) => d.Route),
 )
 
-const Auth2RouteLazyRoute = Auth2RouteLazyImport.update({
-  id: '/_auth2',
+const DashboardRouteLazyRoute = DashboardRouteLazyImport.update({
+  id: '/_dashboard',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/_auth2/route.lazy').then((d) => d.Route))
+} as any).lazy(() =>
+  import('./routes/_dashboard/route.lazy').then((d) => d.Route),
+)
+
+const R404Route = R404Import.update({
+  id: '/__404',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const MarketingIndexLazyRoute = MarketingIndexLazyImport.update({
   path: '/',
@@ -54,6 +72,18 @@ const MarketingIndexLazyRoute = MarketingIndexLazyImport.update({
 } as any).lazy(() =>
   import('./routes/_marketing/index.lazy').then((d) => d.Route),
 )
+
+const Auth2RegisterLazyRoute = Auth2RegisterLazyImport.update({
+  path: '/register',
+  getParentRoute: () => Auth2RouteLazyRoute,
+} as any).lazy(() =>
+  import('./routes/auth2/register.lazy').then((d) => d.Route),
+)
+
+const Auth2LoginLazyRoute = Auth2LoginLazyImport.update({
+  path: '/login',
+  getParentRoute: () => Auth2RouteLazyRoute,
+} as any).lazy(() => import('./routes/auth2/login.lazy').then((d) => d.Route))
 
 const MarketingServicesLazyRoute = MarketingServicesLazyImport.update({
   path: '/services',
@@ -69,17 +99,19 @@ const MarketingAboutUsLazyRoute = MarketingAboutUsLazyImport.update({
   import('./routes/_marketing/about-us.lazy').then((d) => d.Route),
 )
 
-const Auth2RegisterLazyRoute = Auth2RegisterLazyImport.update({
-  path: '/register',
-  getParentRoute: () => Auth2RouteLazyRoute,
+const DashboardDashboardLazyRoute = DashboardDashboardLazyImport.update({
+  path: '/dashboard',
+  getParentRoute: () => DashboardRouteLazyRoute,
 } as any).lazy(() =>
-  import('./routes/_auth2/register.lazy').then((d) => d.Route),
+  import('./routes/_dashboard/dashboard.lazy').then((d) => d.Route),
 )
 
-const Auth2LoginLazyRoute = Auth2LoginLazyImport.update({
-  path: '/login',
-  getParentRoute: () => Auth2RouteLazyRoute,
-} as any).lazy(() => import('./routes/_auth2/login.lazy').then((d) => d.Route))
+const DashboardApplicationLazyRoute = DashboardApplicationLazyImport.update({
+  path: '/application',
+  getParentRoute: () => DashboardRouteLazyRoute,
+} as any).lazy(() =>
+  import('./routes/_dashboard/application.lazy').then((d) => d.Route),
+)
 
 const AuthResetVerificationLazyRoute = AuthResetVerificationLazyImport.update({
   path: '/reset-verification',
@@ -125,11 +157,18 @@ const AuthEmailVerificationLazyRoute = AuthEmailVerificationLazyImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_auth2': {
-      id: '/_auth2'
+    '/__404': {
+      id: '/__404'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof Auth2RouteLazyImport
+      preLoaderRoute: typeof R404Import
+      parentRoute: typeof rootRoute
+    }
+    '/_dashboard': {
+      id: '/_dashboard'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof DashboardRouteLazyImport
       parentRoute: typeof rootRoute
     }
     '/_marketing': {
@@ -137,6 +176,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof MarketingRouteLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth2': {
+      id: '/auth2'
+      path: '/auth2'
+      fullPath: '/auth2'
+      preLoaderRoute: typeof Auth2RouteLazyImport
       parentRoute: typeof rootRoute
     }
     '/_auth/email-verification': {
@@ -181,19 +227,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetVerificationLazyImport
       parentRoute: typeof rootRoute
     }
-    '/_auth2/login': {
-      id: '/_auth2/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof Auth2LoginLazyImport
-      parentRoute: typeof Auth2RouteLazyImport
+    '/_dashboard/application': {
+      id: '/_dashboard/application'
+      path: '/application'
+      fullPath: '/application'
+      preLoaderRoute: typeof DashboardApplicationLazyImport
+      parentRoute: typeof DashboardRouteLazyImport
     }
-    '/_auth2/register': {
-      id: '/_auth2/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof Auth2RegisterLazyImport
-      parentRoute: typeof Auth2RouteLazyImport
+    '/_dashboard/dashboard': {
+      id: '/_dashboard/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardDashboardLazyImport
+      parentRoute: typeof DashboardRouteLazyImport
     }
     '/_marketing/about-us': {
       id: '/_marketing/about-us'
@@ -209,6 +255,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MarketingServicesLazyImport
       parentRoute: typeof MarketingRouteLazyImport
     }
+    '/auth2/login': {
+      id: '/auth2/login'
+      path: '/login'
+      fullPath: '/auth2/login'
+      preLoaderRoute: typeof Auth2LoginLazyImport
+      parentRoute: typeof Auth2RouteLazyImport
+    }
+    '/auth2/register': {
+      id: '/auth2/register'
+      path: '/register'
+      fullPath: '/auth2/register'
+      preLoaderRoute: typeof Auth2RegisterLazyImport
+      parentRoute: typeof Auth2RouteLazyImport
+    }
     '/_marketing/': {
       id: '/_marketing/'
       path: '/'
@@ -222,14 +282,18 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
-  Auth2RouteLazyRoute: Auth2RouteLazyRoute.addChildren({
-    Auth2LoginLazyRoute,
-    Auth2RegisterLazyRoute,
+  DashboardRouteLazyRoute: DashboardRouteLazyRoute.addChildren({
+    DashboardApplicationLazyRoute,
+    DashboardDashboardLazyRoute,
   }),
   MarketingRouteLazyRoute: MarketingRouteLazyRoute.addChildren({
     MarketingAboutUsLazyRoute,
     MarketingServicesLazyRoute,
     MarketingIndexLazyRoute,
+  }),
+  Auth2RouteLazyRoute: Auth2RouteLazyRoute.addChildren({
+    Auth2LoginLazyRoute,
+    Auth2RegisterLazyRoute,
   }),
   AuthEmailVerificationLazyRoute,
   AuthLoginLazyRoute,
@@ -247,8 +311,10 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/_auth2",
+        "/__404",
+        "/_dashboard",
         "/_marketing",
+        "/auth2",
         "/_auth/email-verification",
         "/_auth/login",
         "/_auth/register",
@@ -257,11 +323,14 @@ export const routeTree = rootRoute.addChildren({
         "/_auth/reset-verification"
       ]
     },
-    "/_auth2": {
-      "filePath": "_auth2/route.lazy.tsx",
+    "/__404": {
+      "filePath": "__404.tsx"
+    },
+    "/_dashboard": {
+      "filePath": "_dashboard/route.lazy.tsx",
       "children": [
-        "/_auth2/login",
-        "/_auth2/register"
+        "/_dashboard/application",
+        "/_dashboard/dashboard"
       ]
     },
     "/_marketing": {
@@ -270,6 +339,13 @@ export const routeTree = rootRoute.addChildren({
         "/_marketing/about-us",
         "/_marketing/services",
         "/_marketing/"
+      ]
+    },
+    "/auth2": {
+      "filePath": "auth2/route.lazy.tsx",
+      "children": [
+        "/auth2/login",
+        "/auth2/register"
       ]
     },
     "/_auth/email-verification": {
@@ -290,13 +366,13 @@ export const routeTree = rootRoute.addChildren({
     "/_auth/reset-verification": {
       "filePath": "_auth/reset-verification.lazy.tsx"
     },
-    "/_auth2/login": {
-      "filePath": "_auth2/login.lazy.tsx",
-      "parent": "/_auth2"
+    "/_dashboard/application": {
+      "filePath": "_dashboard/application.lazy.tsx",
+      "parent": "/_dashboard"
     },
-    "/_auth2/register": {
-      "filePath": "_auth2/register.lazy.tsx",
-      "parent": "/_auth2"
+    "/_dashboard/dashboard": {
+      "filePath": "_dashboard/dashboard.lazy.tsx",
+      "parent": "/_dashboard"
     },
     "/_marketing/about-us": {
       "filePath": "_marketing/about-us.lazy.tsx",
@@ -305,6 +381,14 @@ export const routeTree = rootRoute.addChildren({
     "/_marketing/services": {
       "filePath": "_marketing/services.lazy.tsx",
       "parent": "/_marketing"
+    },
+    "/auth2/login": {
+      "filePath": "auth2/login.lazy.tsx",
+      "parent": "/auth2"
+    },
+    "/auth2/register": {
+      "filePath": "auth2/register.lazy.tsx",
+      "parent": "/auth2"
     },
     "/_marketing/": {
       "filePath": "_marketing/index.lazy.tsx",

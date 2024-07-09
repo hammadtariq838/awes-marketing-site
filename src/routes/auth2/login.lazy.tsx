@@ -1,8 +1,9 @@
 import { createLazyFileRoute } from '@tanstack/react-router'
 
-export const Route = createLazyFileRoute('/_auth2/login')({
+export const Route = createLazyFileRoute('/auth2/login')({
   component: LoginScreen,
 })
+
 
 function InputField({ label, type = "text" }: { label: string; type?: string }) {
   const id = label.toLowerCase().replace(/\s/g, '-');
